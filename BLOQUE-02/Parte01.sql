@@ -35,3 +35,48 @@ where estado=1 --(II)
 group by codubigeo --(III)
 having count(codzona)>=4 --(IV)
 order by codubigeo desc --(VI)
+
+--Alias de columna
+
+select nom_dpto DEPARTAMENTO,nom_prov as PROVINCIA,'DISTRITO'=nom_dto,codubigeo as [MI-UBIGEO] from Ubigeo
+
+--Alias de tabla
+
+select nom_dpto DEPARTAMENTO,nom_prov as PROVINCIA,'DISTRITO'=nom_dto,codubigeo as [MI-UBIGEO] from Ubigeo u
+
+select nom_dpto DEPARTAMENTO,nom_prov as PROVINCIA,'DISTRITO'=nom_dto,codubigeo as [MI-UBIGEO] from Ubigeo as u
+
+select u.nom_dpto DEPARTAMENTO,u.nom_prov as PROVINCIA,'DISTRITO'=u.nom_dto,u.codubigeo as [MI-UBIGEO] from Ubigeo as u
+
+select z.codubigeo from Zona as z
+
+--Expresiones CASE 
+
+--02.01
+
+--a
+
+select nom_dpto from Ubigeo --Obtener los nombres de departamento
+select distinct nom_dpto from Ubigeo  --Obtener los nombres de departamento irrepetibles
+
+--b
+
+select codubigeo from Zona --Obtener los codigos de ubigeo de zona
+select distinct codubigeo from Zona --Obtener los codigos de ubigeo de zona irrepetibles
+
+--c
+
+select nom_dpto,nom_prov from Ubigeo --Obtener los nombres de departamento y provincia
+select distinct nom_dpto,nom_prov from Ubigeo --Obtener las combinaciones de departamento y provincia irrepetibles
+select distinct nom_dpto,nom_prov,nom_dto from Ubigeo --Obtener las combinaciones de departamento,provincia y distrito irrepetibles
+
+--02.02
+
+select nombre as ZONA,codubigeo as [CODIGO UBIGEO],estado as ESTADO,
+case 
+	when estado=1 then 'Zona activa'
+	when estado=0 then 'Zona inactiva'
+	else 'Sin detalle' 
+end as [MENSAJE ESTADO]
+from Zona 
+where codubigeo=1
