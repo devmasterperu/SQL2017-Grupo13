@@ -80,3 +80,27 @@ case
 end as [MENSAJE ESTADO]
 from Zona 
 where codubigeo=1
+
+--02.03
+
+select cod_dpto+cod_prov+cod_dto as UBIGEO,nom_dpto as DPTO, nom_prov as PROV,nom_dto as DTO,
+case
+	when nom_prov='HUAURA' then 'Provincia Huaura'
+	else 'Otra Provincia' 
+END as MENSAJE
+FROM Ubigeo
+
+--02.04
+declare @tipo_cambio decimal(6,3)=3.430
+
+--select cast(round(10.4561,2) as decimal(6,2)) --round(numero,posicion_redondeo)
+
+select nombre as [PLAN],precioref as PRECIO_SOL,cast(round(precioref/@tipo_cambio,2) as decimal(6,2)) as PRECIO_DOL,
+case 
+	when precioref>=0 and precioref<70 then '[0,70>'
+	when precioref>=70 and precioref<100 then '[70,100>'
+	when precioref>=100 then '[100,+>' 
+	else 'Sin rango definido'
+	end as RANGO_SOL
+from PlanInter
+
