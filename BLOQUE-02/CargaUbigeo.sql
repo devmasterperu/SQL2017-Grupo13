@@ -1,7 +1,7 @@
 --Carga de Ubigeo
 
 insert into Ubigeo(cod_dpto,nom_dpto,cod_prov,nom_prov,cod_dto,nom_dto) values('15','LIMA','08','HUAURA','01','HUACHO')
-go
+go --Guardar en la tabla ubigeo(cod_dpto,nom_dpto,cod_prov,nom_prov,cod_dto,nom_dto) valores (...)
 insert into Ubigeo(cod_dpto,nom_dpto,cod_prov,nom_prov,cod_dto,nom_dto) values('15','LIMA','08','HUAURA','02','AMBAR')
 go
 insert into Ubigeo(cod_dpto,nom_dpto,cod_prov,nom_prov,cod_dto,nom_dto) values('15','LIMA','08','HUAURA','03','CALETA DE CARQUIN')
