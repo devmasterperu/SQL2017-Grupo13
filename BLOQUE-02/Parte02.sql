@@ -69,3 +69,26 @@ where
 --estado=1 and codubigeo=1 
 NOT (estado=1 and codubigeo=1 )
 order by codzona asc --Menor a mayor
+
+--02.07
+
+select * from Cliente
+
+--02.08
+
+--a
+select case when codtipo=3 then 'RUC' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,razon_social as RAZON_SOCIAL,
+codzona as CODZONA,fec_inicio as FEC_INICIO,tipo_cliente
+from Cliente
+--where tipo_cliente='E' and (codzona=1 or codzona=3 or codzona=5 or codzona=7)
+where tipo_cliente='E' and codzona in (1,3,5,7)
+order by razon_social desc
+
+--b
+select case when codtipo=3 then 'RUC' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,razon_social as RAZON_SOCIAL,fec_inicio as FEC_INICIO,tipo_cliente
+from Cliente
+--where tipo_cliente='E' and (codzona=1 or codzona=3 or codzona=5 or codzona=7)
+where tipo_cliente='E' and fec_inicio between '1998-01-01' and '1998-12-31'
+order by fec_inicio desc --ordenados por fec_inicio del más reciente al más antiguo
