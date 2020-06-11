@@ -92,3 +92,61 @@ from Cliente
 --where tipo_cliente='E' and (codzona=1 or codzona=3 or codzona=5 or codzona=7)
 where tipo_cliente='E' and fec_inicio between '1998-01-01' and '1998-12-31'
 order by fec_inicio desc --ordenados por fec_inicio del más reciente al más antiguo
+
+--02.10
+
+select * from TipoDocumento where codtipo=1
+--a
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE 'A%'--Nombre completo inicie en ‘A’.
+
+--b
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '%AMA%'--Nombre completo contiene la secuencia ‘AMA’.
+
+--c
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '%AN'--Nombre completo finaliza en 'AN'.
+
+--e
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '_ARI%' /*Nombre completo contenga la secuencia 'ARI'
+desde la 2° posición */
+
+--f
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '%M__' /*Nombre completo tenga como antepenultimo
+caracter la M */
+
+--h
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '[aeiou]%[aeiou]' /*Nombre completo inicie y 
+finalice con una vocal.*/
+
+--i NOTA: Si los campos están validados y sólo se han ingresado consonantes y vocales.
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '[^aeiou]%[^aeiou]' /*Nombre completo inicie y 
+finalice con una consonante.*/
+
+--select '1*DEV MASTER PERU' from Cliente
+
+--j NOTA: Si los campos están validados y sólo se han ingresado consonantes y vocales.
+select case when codtipo=1 then 'LE o DNI' else 'OTRO TIPO' end as TIPO_DOC,
+numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
+from Cliente 
+where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '[aeiou]%[^aeiou]' /*Nombre inicie con una vocal y 
+finalice con una consonante.*/
