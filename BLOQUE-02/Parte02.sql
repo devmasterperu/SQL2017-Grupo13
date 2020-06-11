@@ -53,8 +53,8 @@ where
 estado=1 --P
 or
 codubigeo=1 --Q
-order by codubigeo desc,nombre asc --1° nivel x codubigeo de mayor a menor, 2° nivel nombre A-Z
-
+--order by codubigeo desc,nombre asc --1° nivel x codubigeo de mayor a menor, 2° nivel nombre A-Z
+order by nombre asc,codubigeo desc
 --e
 
 --NUM_RES(estado=1 and codubigeo=1)+NUM_RES(NOT (estado=1 and codubigeo=1 ))=#ZONA
@@ -150,3 +150,18 @@ numdoc as NUM_DOC,nombres+' '+ape_paterno+' '+ape_materno as CLIENTE
 from Cliente 
 where tipo_cliente='P' and nombres+' '+ape_paterno+' '+ape_materno LIKE '[aeiou]%[^aeiou]' /*Nombre inicie con una vocal y 
 finalice con una consonante.*/
+
+--02.11
+--Por cada codzona, estado sumarizar 
+select codzona,estado,count(codcliente) as TOT_CLIENTES,min(fec_inicio) as MIN_FEC_INICIO,max(fec_inicio) as MAX_FEC_INICIO,
+case 
+when count(codcliente)>=0 and count(codcliente)<20 then 'TOTAL_INFERIOR'
+when count(codcliente)>=20 and count(codcliente)<40 then 'TOTAL_MEDIO'
+when count(codcliente)>=40 then 'TOTAL_SUPERIOR'
+else 'SIN MENSAJE'
+end as MENSAJE
+from Cliente 
+where tipo_cliente='E'
+group by codzona, estado --Agrupar x codzona, estado
+having count(codcliente)>30 --Filtrar los grupos con total clientes>10
+order by TOT_CLIENTES desc

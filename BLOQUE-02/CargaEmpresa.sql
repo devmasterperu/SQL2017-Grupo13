@@ -798,3 +798,5 @@ insert into cliente(codtipo,numdoc,tipo_cliente,razon_social,fec_inicio,email,di
 GO
 insert into cliente(codtipo,numdoc,tipo_cliente,razon_social,fec_inicio,email,direccion,codzona,estado) values (3,'77884365091','E','EMPRESA 400','2001-09-29','CONTACTO@EMPRESA400.pe','CA. ALFONSO UGARTE',2,1) 
 GO
+
+select * from Cliente
