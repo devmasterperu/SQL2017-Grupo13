@@ -20,7 +20,21 @@ inner join ubigeo u on z.codubigeo=u.codubigeo
 where t.estado=0 and c.tipo_cliente='P'
 order by c.email desc
 
+--03.08
 
+--getdate(): Obtener fecha y hora actual de tu servidor
+
+select  tipo as TIPO, numero as NUMERO, 
+		case when c.tipo_cliente='P' then concat (c.nombres,' ',c.ape_paterno,'',c.ape_materno) 
+			 when c.tipo_cliente='E' then razon_social
+			 else 'SIN DETALLE'
+			 end as CLIENTE, 
+		isnull(c.email,'SIN DETALLE') as EMAIL, 
+		convert(varchar(8),getdate(),112) as FEC_CONSULTA --112:AAAAMMDD
+from telefono t left join cliente c on t.codcliente=c.codcliente --Teléfono prevalece
+--cliente c left join telefono t on t.codcliente=c.codcliente --Cliente prevalece
+where t.estado=1
+order by c.email desc
 
 
 
