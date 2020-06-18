@@ -1,5 +1,11 @@
 --Carga Telefono-2
 --select * from Cliente where codcliente=1001
+
+--Deshabilitar restricción de Teléfono
+
+ALTER TABLE [dbo].[Telefono] NOCHECK CONSTRAINT [RefCliente6]
+GO
+
 insert into Telefono(tipo,numero,codcliente,estado) values ('LLA ','012380328',1001,1)
 go
 insert into Telefono(tipo,numero,codcliente,estado) values ('LLA ','012380329',1002,1)
