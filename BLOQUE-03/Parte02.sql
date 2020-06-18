@@ -36,5 +36,34 @@ from telefono t left join cliente c on t.codcliente=c.codcliente --Teléfono prev
 where t.estado=1
 order by c.email desc
 
+--03.09
+
+select z.nombre as ZONA , 
+ isnull(u.codubigeo,0) as CODUBIGEO, 
+ isnull(cast(cod_dpto+cod_prov+cod_dto as varchar(8)),'SIN DATO')  as UBIGEO, 
+ isnull(u.nom_dpto,'SIN DATO') as DPTO, 
+ isnull(u.nom_prov,'SIN DATO')  as PROV,
+ isnull(u.nom_dto,'SIN DATO') as DTO 
+from zona z left join ubigeo  u on z.codubigeo=u.codubigeo --Zona prevalece ubigeo
+where z.estado=1
+order by z.codzona desc
+
+--03.10
+
+--LEFT_JOIN
+  select co.codcliente as [CODIGO CLIENTE],isnull(p.nombre,'SIN DATO') as [NOMBRE PLAN],
+  isnull(p.precioref,0.00) as [PRECIO PLAN],co.precio as [PRECIO CONTRATO],
+  co.fec_contrato as [FECHA CONTRATO]
+  from Contrato as co
+  left join PlanInter as p on co.codplan=p.codplan --Contrato prevalece PlanInter
+
+--RIGHT_JOIN
+  select co.codcliente as [CODIGO CLIENTE],isnull(p.nombre,'SIN DATO') as [NOMBRE PLAN],
+  isnull(p.precioref,0.00) as [PRECIO PLAN],co.precio as [PRECIO CONTRATO],
+  co.fec_contrato as [FECHA CONTRATO]
+  from  PlanInter as p
+  right join Contrato as co on co.codplan=p.codplan --Contrato prevalece PlanInter
+
+
 
 

@@ -36,3 +36,6 @@ insert into contrato(codplan,codcliente,fec_contrato,periodo,precio,ip_router,ss
 go
 insert into contrato(codplan,codcliente,fec_contrato,periodo,precio,ip_router,ssis_red_wifi,contrasena,fechora_registro,estado) values (6,550,'2019-04-19','M',90,'192.168.51.77','RED-984',hashbytes('SHA1','Password16'),getdate(),1)
 go
+
+select * from Contrato
+where codplan=6
