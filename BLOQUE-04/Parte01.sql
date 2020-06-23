@@ -148,4 +148,24 @@ from Contrato co
 	inner join Zona z on c.codzona=z.codzona
 	inner join Ubigeo u on z.codubigeo=u.codubigeo
 where c.tipo_cliente='P' and c.estado=0 and 
-		u.cod_dpto='15' and u.cod_prov='08' and u.cod_dto='01'
+		u.cod_dpto='15' and u.cod_prov='A8' and u.cod_dto='01'
+
+--04.09
+select numdoc,NOMBRES,APE_PATERNO,APE_MATERNO,FEC_NACIMIENTO,SEXO,EMAIL,DIRECCION
+from Cliente where codcliente=500
+
+begin tran --COLOCAR_SIEMPRE
+	update Cliente
+	set numdoc='46173385',
+		nombres='DOMITILA CAMILA',
+		ape_paterno='LOPEZ',
+		ape_materno='MORALES',
+		fec_nacimiento='1980-01-09',
+		sexo='F',
+		email='DOMITILA_LOPEZ@GMAIL.COM',
+		direccion='URB. LOS CIPRESES M-24'
+	where codcliente=500
+rollback   --COLOCAR_SIEMPRE
+
+select numdoc,NOMBRES,APE_PATERNO,APE_MATERNO,FEC_NACIMIENTO,SEXO,EMAIL,DIRECCION
+from Cliente where codcliente=500
