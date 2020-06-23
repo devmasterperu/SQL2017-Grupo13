@@ -40,3 +40,22 @@ insert into PlanInter(nombre,precioref,descripcion,fechoraregistro)
 values ('STAR III',210.00,'Solicitado por comité junio 2020.','2020-06-22 21:00:00.000')
 
 select nombre,precioref,descripcion,fechoraregistro from PlanInter 
+
+--04.02
+
+begin tran
+	delete from Zona where codzona>=1013
+rollback
+
+DBCC CHECKIDENT ('Zona', RESEED,23); --RESETEAR CODZONA A 23.SGTE_VALOR SERÁ 24.
+
+insert into Zona(nombre,estado,codubigeo)
+select nombre,1,u.codubigeo 
+from Zona_Carga as zc
+inner join Ubigeo as u on 
+rtrim(ltrim(zc.departamento))=rtrim(ltrim(u.nom_dpto)) and 
+rtrim(ltrim(zc.provincia))=rtrim(ltrim(u.nom_prov)) and
+rtrim(ltrim(zc.distrito))=rtrim(ltrim(u.nom_dto)) 
+where estado='ACTIVO'
+
+select codzona,nombre,estado,codubigeo from Zona
