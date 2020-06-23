@@ -42,7 +42,7 @@ values ('STAR III',210.00,'Solicitado por comité junio 2020.','2020-06-22 21:00:
 select nombre,precioref,descripcion,fechoraregistro from PlanInter 
 
 --04.02
-
+--a
 begin tran
 	delete from Zona where codzona>=1013
 rollback
@@ -59,3 +59,44 @@ rtrim(ltrim(zc.distrito))=rtrim(ltrim(u.nom_dto))
 where estado='ACTIVO'
 
 select codzona,nombre,estado,codubigeo from Zona
+
+--b
+
+begin tran
+	delete from Zona where codzona>=30
+rollback
+
+DBCC CHECKIDENT ('Zona', RESEED,29); --RESETEAR CODZONA A 29.SGTE_VALOR SERÁ 30.
+
+--create procedure usp_selzonacarga as
+alter procedure usp_selzonacarga as
+select nombre,0,u.codubigeo 
+from Zona_Carga as zc
+inner join Ubigeo as u on 
+rtrim(ltrim(zc.departamento))=rtrim(ltrim(u.nom_dpto)) and 
+rtrim(ltrim(zc.provincia))=rtrim(ltrim(u.nom_prov)) and
+rtrim(ltrim(zc.distrito))=rtrim(ltrim(u.nom_dto)) 
+where estado='INACTIVO'
+
+insert into Zona(nombre,estado,codubigeo)
+execute usp_selzonacarga
+
+select codzona,nombre,estado,codubigeo from Zona
+
+--c
+
+alter procedure usp_selzonacarga as
+select nombre,0,u.codubigeo 
+from Zona_Carga as zc
+inner join Ubigeo as u on 
+rtrim(ltrim(zc.departamento))=rtrim(ltrim(u.nom_dpto)) and 
+rtrim(ltrim(zc.provincia))=rtrim(ltrim(u.nom_prov)) and
+rtrim(ltrim(zc.distrito))=rtrim(ltrim(u.nom_dto)) 
+where estado is null --Zonas en estado desconocido
+
+insert into Zona(nombre,estado,codubigeo)
+execute usp_selzonacarga
+
+select codzona,nombre,estado,codubigeo from Zona
+
+--04.03
