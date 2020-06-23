@@ -100,3 +100,52 @@ execute usp_selzonacarga
 select codzona,nombre,estado,codubigeo from Zona
 
 --04.03
+
+SET IDENTITY_INSERT dbo.Zona ON;  --Inserción de Codzona se habilita
+
+insert into Zona(codzona,nombre,estado,codubigeo)--Codzona es autogenerado
+values (13,'CAJATAMBO-A',1,18)
+go
+
+insert into Zona(codzona,nombre,estado,codubigeo)--Codzona es autogenerado
+values (14,'CAJATAMBO-B',1,18)
+go
+
+insert into Zona(codzona,nombre,estado,codubigeo)--Codzona es autogenerado
+values (15,'CAJATAMBO-C',1,18)
+go
+
+SET IDENTITY_INSERT dbo.Zona OFF;  --Inserción de Codzona se deshabilita
+
+select codzona,nombre,estado,codubigeo from Zona
+order by codzona
+
+--04.05
+
+begin tran --COLOCAR_SIEMPRE
+	delete from Telefono
+	where codcliente=18 and tipo<>'LLA'
+rollback   --COLOCAR_SIEMPRE
+
+select * from Telefono --6
+where codcliente=18 and tipo<>'LLA'
+
+--04.07
+
+begin tran --COLOCAR_SIEMPRE
+	delete co
+	from Contrato co
+	inner join Cliente c on co.codcliente=c.codcliente
+	inner join Zona z on c.codzona=z.codzona
+	inner join Ubigeo u on z.codubigeo=u.codubigeo
+	where c.tipo_cliente='P' and c.estado=0 and 
+		  u.cod_dpto='15' and u.cod_prov='08' and u.cod_dto='01'
+rollback   --COLOCAR_SIEMPRE
+
+select co.*
+from Contrato co
+	inner join Cliente c on co.codcliente=c.codcliente
+	inner join Zona z on c.codzona=z.codzona
+	inner join Ubigeo u on z.codubigeo=u.codubigeo
+where c.tipo_cliente='P' and c.estado=0 and 
+		u.cod_dpto='15' and u.cod_prov='08' and u.cod_dto='01'
