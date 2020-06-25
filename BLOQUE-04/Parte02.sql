@@ -15,6 +15,16 @@ begin tran
 	join PlanInter p on co.codplan=p.codplan
 rollback
 
-select codplan,periodo,precio,nuevo_precio from Contrato
+--¿Quiénes son los clientes a los cuales no les conviene este nuevo precio?
+select 
+case 
+	when c.tipo_cliente='P' then c.nombres+' '+c.ape_paterno+' '+c.ape_materno
+	when c.tipo_cliente='E' then c.razon_social
+	else 'SIN DATO'
+end as CLIENTE,
+p.nombre as [PLAN],precio as [PRECIO ACTUAL],nuevo_precio as [PRECIO NUEVO]
+from Contrato as co
+left join PlanInter as p on co.codplan=p.codplan
+left join Cliente as c on co.codcliente=c.codcliente
+where precio<nuevo_precio
 
-select codplan,nombre,precioref from PlanInter
