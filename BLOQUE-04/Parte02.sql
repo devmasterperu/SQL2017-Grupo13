@@ -25,6 +25,17 @@ end as CLIENTE,
 p.nombre as [PLAN],precio as [PRECIO ACTUAL],nuevo_precio as [PRECIO NUEVO]
 from Contrato as co
 left join PlanInter as p on co.codplan=p.codplan
-left join Cliente as c on co.codcliente=c.codcliente
+inner join Cliente as c on co.codcliente=c.codcliente
 where precio<nuevo_precio
-
+--¿Quiénes son los clientes detectados con un diferencial de S/50.00 a más entre el nuevo precio y el precio actual?
+select 
+case 
+	when c.tipo_cliente='P' then c.nombres+' '+c.ape_paterno+' '+c.ape_materno
+	when c.tipo_cliente='E' then c.razon_social
+	else 'SIN DATO'
+end as CLIENTE,
+p.nombre as [PLAN],precio as [PRECIO ACTUAL],nuevo_precio as [PRECIO NUEVO]
+from Contrato as co
+left join PlanInter as p on co.codplan=p.codplan
+inner join Cliente as c on co.codcliente=c.codcliente
+where nuevo_precio-precio>=50 --Diferencial entre el nuevo_precio y precio>=50
