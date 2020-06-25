@@ -54,3 +54,33 @@ case when (select count(codcliente) from Contrato co where co.codplan=p.codplan)
 end as MENSAJE
 from PlanInter p
 order by TOTAL
+
+--05.05
+
+select
+replace(razon_social,' ','-') as CLIENTE,
+upper(email) as EMAIL,
+(select count(numero) from Telefono t where t.codcliente=c.codcliente and t.estado=1) as [TOTAL-TEL],
+case when (select count(numero) from Telefono t where t.codcliente=c.codcliente and t.estado=1) between 0 and 2
+	 then 'Cliente empresa con menos de 3 teléfonos'
+	 when (select count(numero) from Telefono t where t.codcliente=c.codcliente and t.estado=1) between 3 and 5
+	 then 'Cliente empresa con 3 teléfonos a más y menos de 6 teléfonos'
+	 when (select count(numero) from Telefono t where t.codcliente=c.codcliente and t.estado=1)>=6
+	 then 'Cliente empresa con 6 teléfonos a más'
+	 else 'SIN MENSAJE'
+end as MENSAJE
+from Cliente c
+where c.tipo_cliente='E'
+order by [TOTAL-TEL] desc
+
+
+
+
+
+
+
+
+
+
+
+
