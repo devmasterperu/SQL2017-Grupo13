@@ -73,7 +73,17 @@ from Cliente c
 where c.tipo_cliente='E'
 order by [TOTAL-TEL] desc
 
+--05.06
 
+select 6.50*1.00/4,round(6.50*1.00/4,2),cast(round(6.50*1.00/4,2) as decimal(6,2))
+
+select upper(nombre) as [PLAN],
+(select count(codcliente) from Contrato co where co.codplan=p.codplan) as [TOTAL-P],
+(select count(codcliente) from Contrato) as TOTAL,
+cast(round((select count(codcliente) from Contrato co where co.codplan=p.codplan)*100.00/(select count(codcliente) from Contrato),2)
+as decimal(6,2)) as PORCENTAJE
+from PlanInter p
+order by [TOTAL-P] desc
 
 
 
