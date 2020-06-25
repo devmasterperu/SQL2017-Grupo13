@@ -40,3 +40,17 @@ select
 					   where c.codcliente is null)
 
 select @TOT_C as TOT_C,@TOT_C_E as TOT_C_E,@TOT_C_P as TOT_C_P,@TOT_C_O as TOT_C_O
+
+--05.04
+
+select replace(upper(nombre),' ','_') as [PLAN],--REPLACE(EXPRESION,EXPRESION_BUSQUEDA,EXPRESION_ASIGNAR)
+(select count(codcliente) from Contrato co where co.codplan=p.codplan) as TOTAL,
+case when (select count(codcliente) from Contrato co where co.codplan=p.codplan) between 0 and 99
+	 then 'Plan de baja demanda.'
+	 when (select count(codcliente) from Contrato co where co.codplan=p.codplan) between 100 and 199
+	 then 'Plan de mediana demanda.'
+	 when (select count(codcliente) from Contrato co where co.codplan=p.codplan)>=200
+	 then 'Plan de alta demanda.'
+end as MENSAJE
+from PlanInter p
+order by TOTAL
