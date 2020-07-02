@@ -278,3 +278,26 @@ return
 	where CODIGO=@CODIGO
 
 select * from F_RESUMEN_TELEFONOS_2(38)
+
+--05.13
+
+--Precio promedio de los contratos activos
+select avg(precio)
+from Contrato
+where estado=1
+
+--SUBCONSULTA_WHERE
+select 
+case when c.tipo_cliente='E' then c.razon_social
+	 when c.tipo_cliente='P' then concat(c.nombres,' ',c.ape_paterno,' ',c.ape_materno)
+	 else 'SIN DATO'
+end as CLIENTE,
+isnull(p.nombre,'SIN DATO') as [PLAN],
+isnull(co.fec_contrato,'9999-12-31') as FECHA,
+isnull(co.precio,0.00) as PRECIO,
+cast(round((select avg(precio) from Contrato where estado=1),2) as decimal(8,2)) as PROMEDIO,
+EOMONTH(getdate()) as F_CIERRE--OBTENER_ULTIMO_DIA_MES_FECHA
+from Contrato co
+left join PlanInter p on co.codplan=p.codplan
+left join Cliente c on co.codcliente=c.codcliente
+where precio>(select avg(precio) from Contrato where estado=1)
