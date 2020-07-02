@@ -144,3 +144,137 @@ as return
 	where [COD-CLIENTE]=@COD_CLIENTE
 
 select * from F_REPORTE_CLIENTE_2(402)
+
+
+--05.11
+
+--SUBCONSULTAS_SELECT
+
+select c.codcliente as CODIGO,c.razon_social as EMPRESA,
+(select count(numero) from Telefono t where t.codcliente=c.codcliente) as [TOT-TE],
+(select count(numero) from Telefono t where t.codcliente=c.codcliente and t.tipo='LLA') as [TOT-LLA],
+(select count(numero) from Telefono t where t.codcliente=c.codcliente and t.tipo='SMS') as [TOT-SMS],
+(select count(numero) from Telefono t where t.codcliente=c.codcliente and t.tipo='WSP') as [TOT-WSP]
+from Cliente c
+where c.tipo_cliente='E'
+order by [TOT-TE] desc, [TOT-LLA] desc
+
+--SUBCONSULTAS_FROM
+
+select c.codcliente as CODIGO,c.razon_social as EMPRESA,
+isnull(rlla.total,0) +isnull(rsms.total,0)+isnull(rwsp.total,0)  as [TOT-TE],
+isnull(rlla.total,0) as [TOT-LLA],
+isnull(rsms.total,0) as [TOT-SMS],
+isnull(rwsp.total,0) as [TOT-WSP]
+from Cliente c
+left join 
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='LLA' group by codcliente
+) rlla on c.codcliente=rlla.codcliente
+left join
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='SMS' group by codcliente
+) rsms on c.codcliente=rsms.codcliente
+left join
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='WSP' group by codcliente
+) rwsp on c.codcliente=rwsp.codcliente
+where c.tipo_cliente='E'
+order by [TOT-TE] desc, [TOT-LLA] desc
+
+--CTES
+WITH CTE_RLLA AS
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='LLA' group by codcliente
+),CTE_RSMS AS
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='SMS' group by codcliente
+),CTE_WSP AS 
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='WSP' group by codcliente
+) 
+select c.codcliente as CODIGO,c.razon_social as EMPRESA,
+isnull(rlla.total,0) +isnull(rsms.total,0)+isnull(rwsp.total,0)  as [TOT-TE],
+isnull(rlla.total,0) as [TOT-LLA],
+isnull(rsms.total,0) as [TOT-SMS],
+isnull(rwsp.total,0) as [TOT-WSP]
+from Cliente c
+left join CTE_RLLA as rlla on c.codcliente=rlla.codcliente
+left join CTE_RSMS as rsms on c.codcliente=rsms.codcliente
+left join CTE_WSP as rwsp on c.codcliente=rwsp.codcliente
+where c.tipo_cliente='E'
+order by [TOT-TE] desc, [TOT-LLA] desc
+
+--VISTAS
+create view V_RESUMEN_TELEFONOS as
+WITH CTE_RLLA AS
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='LLA' group by codcliente
+),CTE_RSMS AS
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='SMS' group by codcliente
+),CTE_WSP AS 
+(
+	select codcliente,count(numero) as total from Telefono 
+	where tipo='WSP' group by codcliente
+) 
+select c.codcliente as CODIGO,c.razon_social as EMPRESA,
+isnull(rlla.total,0) +isnull(rsms.total,0)+isnull(rwsp.total,0)  as [TOT-TE],
+isnull(rlla.total,0) as [TOT-LLA],
+isnull(rsms.total,0) as [TOT-SMS],
+isnull(rwsp.total,0) as [TOT-WSP]
+from Cliente c
+left join CTE_RLLA as rlla on c.codcliente=rlla.codcliente
+left join CTE_RSMS as rsms on c.codcliente=rsms.codcliente
+left join CTE_WSP as rwsp on c.codcliente=rwsp.codcliente
+where c.tipo_cliente='E'
+
+select * from V_RESUMEN_TELEFONOS
+order by [TOT-TE] desc, [TOT-LLA] desc
+
+--FUNCION_VALOR_TABLA
+
+create function F_RESUMEN_TELEFONOS(@CODIGO int) returns table as
+return
+	WITH CTE_RLLA AS
+	(
+		select codcliente,count(numero) as total from Telefono 
+		where tipo='LLA' group by codcliente
+	),CTE_RSMS AS
+	(
+		select codcliente,count(numero) as total from Telefono 
+		where tipo='SMS' group by codcliente
+	),CTE_WSP AS 
+	(
+		select codcliente,count(numero) as total from Telefono 
+		where tipo='WSP' group by codcliente
+	) 
+	select c.codcliente as CODIGO,c.razon_social as EMPRESA,
+	isnull(rlla.total,0) +isnull(rsms.total,0)+isnull(rwsp.total,0)  as [TOT-TE],
+	isnull(rlla.total,0) as [TOT-LLA],
+	isnull(rsms.total,0) as [TOT-SMS],
+	isnull(rwsp.total,0) as [TOT-WSP]
+	from Cliente c
+	left join CTE_RLLA as rlla on c.codcliente=rlla.codcliente
+	left join CTE_RSMS as rsms on c.codcliente=rsms.codcliente
+	left join CTE_WSP as rwsp on c.codcliente=rwsp.codcliente
+	where c.tipo_cliente='E' and c.codcliente=@CODIGO
+
+select * from F_RESUMEN_TELEFONOS(39)
+
+--FUNCION_VALOR_TABLA+VISTA
+create function F_RESUMEN_TELEFONOS_2(@CODIGO int) returns table as
+return 
+	select [CODIGO],[EMPRESA],[TOT-TE],[TOT-LLA],[TOT-SMS],[TOT-WSP] 
+	from V_RESUMEN_TELEFONOS
+	where CODIGO=@CODIGO
+
+select * from F_RESUMEN_TELEFONOS_2(38)
