@@ -58,4 +58,32 @@ from Contrato co
 select * from V_RCO
 order by CODPLAN asc,PRECIO asc
 
+--06.02
+
+--TABLAS_DERIVADAS
+
+select codcliente as [CODCLIENTE], razon_social as [RAZON SOCIAL],codzona as [COD ZONA], 
+MIN(fec_inicio) over (partition by c.codzona) as [E-Min], 
+MAX(fec_inicio) over (partition by c.codzona)  as [E-MAX],
+COUNT(codcliente) over (partition by c.codzona) as [TotalCliente]
+from Cliente c
+where tipo_cliente = 'E'
+order by codzona asc , fec_inicio asc;
+
+--FUNCION_VALOR_TABLA
+
+alter function F_RCE() returns table
+as return
+select codcliente as [CODCLIENTE], razon_social as [RAZON SOCIAL],codzona as [COD ZONA],c.fec_inicio as [FEC INICIO],
+MIN(fec_inicio) over (partition by c.codzona) as [E-Min], 
+MAX(fec_inicio) over (partition by c.codzona)  as [E-MAX],
+COUNT(codcliente) over (partition by c.codzona) as [TotalCliente]
+from Cliente c
+where tipo_cliente = 'E'
+	
+select * from F_RCE()
+order by [COD ZONA] asc, [FEC INICIO] asc
+
+
+
 
