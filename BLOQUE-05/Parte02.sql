@@ -301,3 +301,82 @@ from Contrato co
 left join PlanInter p on co.codplan=p.codplan
 left join Cliente c on co.codcliente=c.codcliente
 where precio>(select avg(precio) from Contrato where estado=1)
+
+--05.15
+
+--TABLAS_DERIVADAS
+
+/*Obtener el promedio de contratos por plan*/
+select avg(total) from
+(
+	select codplan,count(codcliente) as total 
+	from Contrato
+	group by codplan
+) rp 
+
+/*Resumen de planes de internet*/
+select co.codplan,count(co.codcliente) as total,
+	(
+		select avg(total) from
+		(
+			select codplan,count(codcliente) as total 
+			from Contrato
+			group by codplan
+		) rp 
+	)as PROMEDIO
+from Contrato co
+group by codplan
+having count(co.codcliente)>(
+								select avg(total) from
+								(
+									select codplan,count(codcliente) as total 
+									from Contrato
+									group by codplan
+								) rp 
+							)	
+--CTES
+
+WITH CTE_RP AS (
+	select codplan,count(codcliente) as total 
+	from Contrato
+	group by codplan
+) 
+select co.codplan,count(co.codcliente) as total,
+	   (select avg(total) from CTE_RP rp) as PROMEDIO
+from   Contrato co
+group by codplan
+having count(co.codcliente)>(select avg(total) from CTE_RP rp)
+
+--VISTAS
+
+/*
+create view V_RP as
+select codplan,count(codcliente) as total 
+from Contrato
+group by codplan
+*/
+
+select co.codplan,count(co.codcliente) as total,
+	   (select avg(total) from V_RP rp) as PROMEDIO
+from   Contrato co
+group by codplan
+having count(co.codcliente)>(select avg(total) from V_RP rp)
+
+--FUNCION_VALOR_TABLA
+/*
+create function F_RP() returns table as
+ return
+	select codplan,count(codcliente) as total 
+	from Contrato
+	group by codplan
+*/
+
+select co.codplan,count(co.codcliente) as total,
+	   (select avg(total) from F_RP() rp) as PROMEDIO
+from   Contrato co
+group by codplan
+having count(co.codcliente)>(select avg(total) from F_RP() rp)
+
+
+
+
