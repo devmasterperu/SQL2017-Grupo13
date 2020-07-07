@@ -84,6 +84,23 @@ where tipo_cliente = 'E'
 select * from F_RCE()
 order by [COD ZONA] asc, [FEC INICIO] asc
 
+--06.03
+
+select codcliente as CODIGO, razon_social as EMPRESA,fec_inicio as FEC_INICIO,
+/*Es la posición irrepetible. Considerar la fecha de inicio, de la más antigua a la más reciente, para generar la posición*/
+row_number() over(order by fec_inicio asc) as RN,
+/*Es la posición que puede repetirse en caso de empates. Considerar la fecha de inicio, de la más antigua a la más reciente, 
+para generar la posición. Además, SI puede existir salto de posiciones en el ranking*/
+rank() over(order by fec_inicio asc) as RK,
+/*Es la posición que puede repetirse en caso de empates. Considerar la fecha de inicio, de la más antigua a la más reciente, 
+para generar la posición. Además, NO puede existir salto de posiciones en el ranking*/
+dense_rank() over(order by fec_inicio asc) as DRK,
+/*Es uno de los 5 grupos al que pertenece el cliente. Considerar la fecha de inicio, de la más antigua a la más reciente, 
+para realizar la agrupación*/
+ntile(5) over(order by fec_inicio asc) as N5
+from Cliente
+where tipo_cliente='E'
+order by fec_inicio asc
 
 
 
