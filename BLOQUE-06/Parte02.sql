@@ -106,7 +106,7 @@ order by ZONA asc, rc.total asc
 
 --FUNCION_VALOR_TABLA
 
-create function F_RESUMEN_CLIENTE() returns table
+alter function F_RESUMEN_CLIENTE() returns table
 as return
 	WITH CTE_RC AS
 	(
