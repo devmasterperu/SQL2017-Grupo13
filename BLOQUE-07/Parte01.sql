@@ -198,3 +198,42 @@ select * from Cliente where codcliente=10
 --10	3	79485452320	E	NULL	NULL	NULL	NULL	NULL	RESTAURANT PAQUIRRI	2020-07-13	INFO@PAQUIRRI.PE	CA. JUAN BARRETO 422	1	0
 execute usp_ActClienteE @codcliente=10,@codtipo=3,@numdoc='79485452320',@razon_social='RESTAURANT PAQUIRRI',
 @fecinicio='2020-07-13',@email='INFO@PAQUIRRI.PE',@direccion='CA. JUAN BARRETO 422',@codzona=1,@estado=0
+
+--07.10
+insert into Configuracion(variable,valor) values 
+('TIPO_ERROR','TTT'),
+('NUMERO_ERROR','999999999')
+
+alter procedure usp_DelTelefono(@tipo varchar(3),@numero varchar(15))
+as
+begin
+	/*SI EXISTE TIPO+NUMERO*/
+	if exists(select numero from Telefono where numero=@numero and tipo=@tipo)
+	begin
+	--Eliminar teléfono
+	  Delete from Telefono where numero=@numero and tipo=@tipo
+	--Mostrar el mensaje 'Teléfono eliminado', el tipo y número eliminado.
+	  Select 'Teléfono eliminado' as MENSAJE,@tipo as TIPO,@numero as NUMERO
+	end
+	/*SI NO EXISTE TIPO+NUMERO*/
+	else
+	begin
+	--Mostrar el mensaje 'No es posible identificar al teléfono a eliminar', 
+	--el tipo con valor 'TTT' y el número con valor '999999999'. 
+	  set @tipo=(select valor from Configuracion where variable='TIPO_ERROR')
+	  set @numero=(select valor from Configuracion where variable='NUMERO_ERROR')
+	  select 'No es posible identificar al teléfono a eliminar' as MENSAJE,@tipo as TIPO,@numero as NUMERO
+	end
+end
+
+--SIN_CAMBIO_CONFIGURACIONES
+execute usp_DelTelefono @tipo='LLA',@numero='915703551'
+
+update Configuracion set valor='NNN'
+where variable='TIPO_ERROR'
+
+update Configuracion set valor='000000000'
+where variable='NUMERO_ERROR'
+
+--CON_CAMBIO_CONFIGURACIONES
+execute usp_DelTelefono @tipo='LLA',@numero='915703551'
