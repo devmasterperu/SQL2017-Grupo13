@@ -57,3 +57,39 @@ EXECUTE USP_REPORTE_TEL @tipo= 'SMS',
 
 EXECUTE USP_REPORTE_TEL @tipo= 'WSP', 
 @mensaje= 'Hola, hasta el 15/07 recibe un 20% de descuento en tu facturación'
+
+--07.05
+
+create table dbo.Configuracion
+(
+codconfig int identity(1,1) primary key,
+variable varchar(300) not null,
+valor varchar(300) not null
+)
+
+insert into dbo.Configuracion(variable,valor) values
+('RAZON_SOCIAL_DEVWIFI','DEV MASTER PERÚ SAC'),
+('RUC_DEVWIFI','20602275320')
+
+create procedure usp_selCliente(@codcliente int) as
+alter procedure usp_selCliente(@codcliente int) as
+begin
+	/*Datos Generales*/
+	select
+	(select valor from dbo.Configuracion where variable='RAZON_SOCIAL_DEVWIFI') as [RAZON_SOCIAL_DEVWIFI],
+	(select valor from dbo.Configuracion where variable='RUC_DEVWIFI') as [RUC_DEVWIFI]
+
+	/*Datos Cliente*/
+	select getdate() as [CONSULTA AL], 
+	       case when tipo_cliente='E' then razon_social
+	            when tipo_cliente='P' then nombres+' '+ape_paterno+' '+ape_materno
+		   else 'SIN INFO'
+	       end as [CLIENTE],
+	       direccion as [DIRECCION],
+		   z.nombre as [ZONA]
+	from Cliente c left join Zona z on c.codzona=z.codzona
+	where codcliente=@codcliente
+end
+
+execute usp_selCliente @codcliente=100 --CLIENTE_EMPRESA
+execute usp_selCliente @codcliente=500 --CLIENTE_PERSONA
