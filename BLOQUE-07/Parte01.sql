@@ -37,3 +37,23 @@ select 7 as N1,9 as N2 union
 select 9 as N1,11 as N2
 )
 select N1,N2,dbo.f_Polinomio(N1,N2) as 'F(N1,N2)' from CTE_Numeros
+
+--07.03
+
+create procedure USP_REPORTE_TEL(@tipo varchar(3),@mensaje varchar(500)) as
+begin
+	select tipo as TIPO,numero as NUMERO,@mensaje as MENSAJE from Telefono
+	where estado=1 and tipo=@tipo
+end
+
+EXECUTE USP_REPORTE_TEL @tipo= 'LLA',
+@mensaje= 'Hola, no olvide realizar el pago de su servicio de Internet' 
+
+EXECUTE USP_REPORTE_TEL @tipo= 'LLA',
+@mensaje= 'Hola, no olvide que el último día de pago es el 31/07' 
+
+EXECUTE USP_REPORTE_TEL @tipo= 'SMS',
+@mensaje= 'Hola, muchas gracias por su preferencia. Tenemos excelentes promociones para usted'
+
+EXECUTE USP_REPORTE_TEL @tipo= 'WSP', 
+@mensaje= 'Hola, hasta el 15/07 recibe un 20% de descuento en tu facturación'
