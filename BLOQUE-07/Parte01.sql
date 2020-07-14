@@ -135,3 +135,28 @@ execute usp_InsUbigeo @cod_dpto='01',@nom_dpto='AMAZONAS',@cod_prov='02',@nom_pr
 
 execute usp_InsUbigeo @cod_dpto='01',@nom_dpto='AMAZONAS',@cod_prov='02',@nom_prov='BAGUA',
 @cod_dto='03',@nom_dto='BAGUA' --INSERCION_OK
+
+select top 1 * from Cliente order by codcliente desc
+select ident_current('dbo.Cliente')
+
+--07.07
+
+create procedure usp_planInter(@nombre varchar(50), @precioref decimal(6,2),@descripcion varchar(200), @estado bit) as
+begin
+	if not exists(select 1 from PlanInter where nombre = @nombre)
+	begin
+		insert into dbo.PlanInter(nombre, precioref, descripcion, estado) 
+		values (@nombre, @precioref, @descripcion,@estado)
+	    
+		select 'Plan Internet insertado' as MENSAJE,IDENT_CURRENT('dbo.PlanInter') as CODPLAN
+	end
+	else
+	begin
+		select 'Plan Internet existente' as MENSAJE,0 as CODPLAN
+	end
+end
+
+execute usp_planInter @nombre='FAMILIAR', @precioref=100.99,@descripcion='PLAN DE HASTA 3 MODEMS', @estado=1
+
+execute usp_planInter @nombre='FAMILIAR TOTAL', @precioref=100.99,@descripcion='PLAN DE HASTA 3 MODEMS', @estado=1
+
