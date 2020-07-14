@@ -74,22 +74,64 @@ insert into dbo.Configuracion(variable,valor) values
 create procedure usp_selCliente(@codcliente int) as
 alter procedure usp_selCliente(@codcliente int) as
 begin
-	/*Datos Generales*/
-	select
-	(select valor from dbo.Configuracion where variable='RAZON_SOCIAL_DEVWIFI') as [RAZON_SOCIAL_DEVWIFI],
-	(select valor from dbo.Configuracion where variable='RUC_DEVWIFI') as [RUC_DEVWIFI]
 
-	/*Datos Cliente*/
-	select getdate() as [CONSULTA AL], 
-	       case when tipo_cliente='E' then razon_social
-	            when tipo_cliente='P' then nombres+' '+ape_paterno+' '+ape_materno
-		   else 'SIN INFO'
-	       end as [CLIENTE],
-	       direccion as [DIRECCION],
-		   z.nombre as [ZONA]
-	from Cliente c left join Zona z on c.codzona=z.codzona
-	where codcliente=@codcliente
+	if exists(select 1 from Cliente where codcliente=@codcliente) --Cliente SI existe
+	begin
+		/*Datos Generales*/
+		select
+		(select valor from dbo.Configuracion where variable='RAZON_SOCIAL_DEVWIFI') as [RAZON_SOCIAL_DEVWIFI],
+		(select valor from dbo.Configuracion where variable='RUC_DEVWIFI') as [RUC_DEVWIFI]
+
+		/*Datos Cliente*/
+		select getdate() as [CONSULTA AL], 
+			   case when tipo_cliente='E' then razon_social
+					when tipo_cliente='P' then nombres+' '+ape_paterno+' '+ape_materno
+			   else 'SIN INFO'
+			   end as [CLIENTE],
+			   direccion as [DIRECCION],
+			   z.nombre as [ZONA]
+		from Cliente c left join Zona z on c.codzona=z.codzona
+		where codcliente=@codcliente
+	end
+	else --Cliente  NO existe
+	begin
+		select 'El cliente no ha sido encontrado en la Base de Datos'
+	end
 end
 
 execute usp_selCliente @codcliente=100 --CLIENTE_EMPRESA
 execute usp_selCliente @codcliente=500 --CLIENTE_PERSONA
+execute usp_selCliente @codcliente=10000 --CLIENTE_NO_EXISTENTE
+
+--07.06
+
+create procedure usp_InsUbigeo(@cod_dpto char(20),@nom_dpto varchar(50),
+@cod_prov char(3),@nom_prov varchar(50),@cod_dto char(2),@nom_dto varchar(100)) as
+begin
+	/*SI cod_dpto+cod_prov+cod_dto NO existe*/
+	if not exists(select 1 from Ubigeo where cod_dpto=@cod_dpto and 
+	                                         cod_prov=@cod_prov and 
+											 cod_dto=@cod_dto)
+	begin
+	  --Insertar Ubigeo
+	  insert into dbo.Ubigeo(cod_dpto,nom_dpto,cod_prov,nom_prov,cod_dto,nom_dto)
+	  values (@cod_dpto,@nom_dpto,@cod_prov,@nom_prov,@cod_dto,@nom_dto)
+	  --Mostrar el mensaje 'Ubigeo insertado' y el codubigeo asignado
+	  select 'Ubigeo insertado' as MENSAJE,IDENT_CURRENT('dbo.Ubigeo') as CODUBIGEO
+	end
+	/*SI cod_dpto+cod_prov+cod_dto SI existe*/
+	else
+	begin
+	  --Mostrar el mensaje 'Ubigeo existente' y retornar el codubigeo con valor 0
+	  select 'Ubigeo existente' as MENSAJE,0 as CODUBIGEO
+	end
+end
+
+execute usp_InsUbigeo @cod_dpto='01',@nom_dpto='AMAZONAS',@cod_prov='02',@nom_prov='BAGUA',
+@cod_dto='01',@nom_dto='BAGUA' --INSERCION_OK
+
+execute usp_InsUbigeo @cod_dpto='01',@nom_dpto='AMAZONAS',@cod_prov='02',@nom_prov='BAGUA',
+@cod_dto='01',@nom_dto='BAGUA' --INSERCION_NO_OK
+
+execute usp_InsUbigeo @cod_dpto='01',@nom_dpto='AMAZONAS',@cod_prov='02',@nom_prov='BAGUA',
+@cod_dto='03',@nom_dto='BAGUA' --INSERCION_OK
