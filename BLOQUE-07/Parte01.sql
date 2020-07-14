@@ -160,3 +160,41 @@ execute usp_planInter @nombre='FAMILIAR', @precioref=100.99,@descripcion='PLAN D
 
 execute usp_planInter @nombre='FAMILIAR TOTAL', @precioref=100.99,@descripcion='PLAN DE HASTA 3 MODEMS', @estado=1
 
+--07.08
+
+create procedure usp_ActClienteE(@codcliente int,
+@codtipo int,@numdoc varchar(15),@razon_social varchar(255),@fecinicio date,
+@email varchar(320),@direccion varchar(250),@codzona int,@estado bit)
+as
+begin 
+	/*SI EXISTE CODCLIENTE+TIPO_CLIENTE*/
+	if exists(select codcliente from Cliente where codcliente=@codcliente and tipo_cliente='E')
+	begin
+	--Actualizar Cliente Empresa
+	  update Cliente
+	  set    codtipo=@codtipo,
+	         numdoc=@numdoc,
+			 razon_social=@razon_social,
+			 fec_inicio=@fecinicio,
+			 email=@email,
+			 direccion=@direccion,
+			 codzona=@codzona,
+			 estado=@estado
+	  where codcliente=@codcliente and tipo_cliente='E'
+	--Mostrar el mensaje 'Cliente empresa actualizado' y el codcliente actualizado
+	  select 'Cliente empresa actualizado' as MENSAJE,@codcliente as CODCLIENTE
+	end
+	/*SI NO EXISTE CODCLIENTE+TIPO_CLIENTE*/
+	else
+	begin
+	--Mostrar el mensaje ‘No es posible identificar al cliente empresa a actualizar’ y retornar también el codcliente
+	  select 'No es posible identificar al cliente empresa a actualizar' as MENSAJE,@codcliente as CODCLIENTE
+	end
+end
+
+select * from Cliente where codcliente=10
+--10	3	79485452314	E	NULL	NULL	NULL	NULL	NULL	EMPRESA 10	2007-06-21	CONTACTO@EMPRESA10.pe	CA. JR. LIMA 748	5	1
+--10	3	79485452320	E	NULL	NULL	NULL	NULL	NULL	RESTAURANT PAQUIRRI	2020-07-13	CONTACTO@PAQUIRRI.PE	CA. JUAN BARRETO 422	1	0
+--10	3	79485452320	E	NULL	NULL	NULL	NULL	NULL	RESTAURANT PAQUIRRI	2020-07-13	INFO@PAQUIRRI.PE	CA. JUAN BARRETO 422	1	0
+execute usp_ActClienteE @codcliente=10,@codtipo=3,@numdoc='79485452320',@razon_social='RESTAURANT PAQUIRRI',
+@fecinicio='2020-07-13',@email='INFO@PAQUIRRI.PE',@direccion='CA. JUAN BARRETO 422',@codzona=1,@estado=0
